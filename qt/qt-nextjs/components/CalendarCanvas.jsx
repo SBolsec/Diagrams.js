@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-export default function AnalogClockCanvas({props }) {
+export default function AnalogClockCanvas() {
   const loadWASM = async () => {
     const script = document.createElement("script");
     script.src = "qtloader.js";
@@ -61,7 +61,7 @@ export default function AnalogClockCanvas({props }) {
         contentEditable="true"
         onContextMenu={(e) => e.preventDefault()}
         style={{width: "100vw", height: "100vh"}}
-        {...props}>
+      >
       </canvas>
     </div>
   )

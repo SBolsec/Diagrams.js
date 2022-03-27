@@ -11,7 +11,7 @@ const ClockPage: NextPage = () => {
         <meta name="description" content="Qt WASM App" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <AddressBookCanvas></AddressBookCanvas>
+      <AddressBookCanvas />
     </div>
   )
 }
