@@ -27,6 +27,7 @@ export default function DiagramProvider({
   const elements = history.elements[history.index];
 
   const [idCounter, setIdCounter] = React.useState<number>(1);
+  const [selectedElementId, setSelectedElementId] = React.useState<number>(0);
 
   const addNode = (nodeCommand: CreateDiagramNodeCommand) => {
     dispatch({
@@ -43,7 +44,9 @@ export default function DiagramProvider({
 
   const redo = () => dispatch({ type: HistoryActionType.REDO });
 
-  const value = { elements, addNode, undo, redo, drag };
+  const clearSelect = () => {};
+
+  const value = { elements, selectedElementId, addNode, undo, redo, drag, clearSelect };
 
   return (
     <DiagramContext.Provider value={value}>{children}</DiagramContext.Provider>

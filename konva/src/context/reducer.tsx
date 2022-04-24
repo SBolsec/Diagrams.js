@@ -29,19 +29,28 @@ type DragAction = {
 
 type Action = AddAction | UndoAction | RedoAction | DragAction;
 
-export function reducer(state: HistoryState, { type, payload }: Action) {
-  switch (type) {
-    case HistoryActionType.ADD:
-      return handleAddElement(state, payload);
-    case HistoryActionType.UNDO:
-      return handleUndo(state);
-    case HistoryActionType.REDO:
-      return handleRedo(state);
-    case HistoryActionType.DRAG:
-      return handleDrag(state, payload);
-    default:
-      return state;
-  }
+function isAddAction(action: Action): action is AddAction {
+  return action.type === HistoryActionType.ADD;
+}
+
+function isUndoAction(action: Action): action is UndoAction {
+  return action.type === HistoryActionType.UNDO;
+}
+
+function isRedoAction(action: Action): action is RedoAction {
+  return action.type === HistoryActionType.REDO;
+}
+
+function isDragAction(action: Action): action is DragAction {
+  return action.type === HistoryActionType.DRAG;
+}
+
+export function reducer(state: HistoryState, action: Action) {
+  if (isAddAction(action)) return handleAddElement(state, action.payload);
+  else if (isUndoAction(action)) return handleUndo(state);
+  else if (isRedoAction(action)) return handleRedo(state);
+  else if (isDragAction(action)) return handleDrag(state, action.payload);
+  else return state;
 }
 
 function handleAddElement(state: HistoryState, element: DiagramElement) {

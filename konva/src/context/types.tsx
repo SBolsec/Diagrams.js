@@ -27,10 +27,12 @@ export type CreateDiagramNodeCommand = {
 
 export type DiagramContextType = {
   elements: DiagramElement[];
+  selectedElementId: number;
   addNode: (element: CreateDiagramNodeCommand) => void;
   undo: () => void;
   redo: () => void;
   drag: (element: DiagramElement) => void;
+  clearSelect: () => void;
 };
 
 export enum HistoryActionType {
@@ -39,4 +41,9 @@ export enum HistoryActionType {
   UNDO = "UNDO",
   REDO = "REDO",
   DRAG = "DRAG",
+}
+
+export enum ActionType {
+  SELECT = "SELECT",
+  CONNECT = "CONNECT",
 }
