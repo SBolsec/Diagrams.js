@@ -17,6 +17,11 @@ export type DiagramNode = {
   type: DiagramElementType;
 };
 
+export type ConnectionLine = {
+  id1: number;
+  id2: number;
+};
+
 export type CreateDiagramNodeCommand = {
   x: number;
   y: number;
@@ -26,11 +31,17 @@ export type CreateDiagramNodeCommand = {
 };
 
 export type DiagramContextType = {
+  editorMode: EditorMode;
+  firstConnectedNode: DiagramNode | null;
   elements: DiagramElement[];
+  connections: ConnectionLine[];
   addNode: (element: CreateDiagramNodeCommand) => void;
   undo: () => void;
   redo: () => void;
   drag: (element: DiagramElement) => void;
+  setEditorMode: (editorMode: EditorMode) => void;
+  startConnect: (element: DiagramNode | null) => void;
+  endConnect: (element: DiagramNode) => void;
 };
 
 export enum HistoryActionType {
@@ -39,4 +50,10 @@ export enum HistoryActionType {
   UNDO = "UNDO",
   REDO = "REDO",
   DRAG = "DRAG",
+  CONNECT = "CONNECT",
+}
+
+export enum EditorMode {
+  SELECT = "SELECT",
+  CONNECT = "CONNECT",
 }

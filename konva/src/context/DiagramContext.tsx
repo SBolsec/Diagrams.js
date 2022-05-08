@@ -5,12 +5,14 @@ import {
   DiagramContextProviderProps,
   DiagramContextType,
   DiagramElement,
+  EditorMode,
   HistoryActionType,
 } from "./types";
 import { HistoryState, reducer } from "./reducer";
 
 const initialState: HistoryState = {
   elements: [[]],
+  connections: [[]],
   index: 0,
 };
 
@@ -25,8 +27,14 @@ export default function DiagramProvider({
 }: DiagramContextProviderProps) {
   const [history, dispatch] = React.useReducer(reducer, initialState);
   const elements = history.elements[history.index];
+  const connections = history.connections[history.index];
 
   const [idCounter, setIdCounter] = React.useState<number>(1);
+  const [editorMode, setEditorMode] = React.useState<EditorMode>(
+    EditorMode.SELECT
+  );
+  const [firstConnectedNode, setFirstConnectedNode] =
+    React.useState<DiagramElement | null>(null);
 
   const addNode = (nodeCommand: CreateDiagramNodeCommand) => {
     dispatch({
@@ -43,7 +51,40 @@ export default function DiagramProvider({
 
   const redo = () => dispatch({ type: HistoryActionType.REDO });
 
-  const value = { elements, addNode, undo, redo, drag };
+  const startConnect = (element: DiagramElement | null) => {
+    if (!firstConnectedNode) {
+      setFirstConnectedNode(element);
+    } else {
+      endConnect(element!);
+    }
+  };
+
+  const endConnect = (element: DiagramElement) => {
+    if (firstConnectedNode && firstConnectedNode.id !== element.id) {
+      dispatch({
+        type: HistoryActionType.CONNECT,
+        payload: {
+          id1: firstConnectedNode.id,
+          id2: element.id,
+        },
+      });
+      setFirstConnectedNode(null);
+    }
+  };
+
+  const value = {
+    elements,
+    connections,
+    firstConnectedNode,
+    addNode,
+    undo,
+    redo,
+    drag,
+    editorMode,
+    setEditorMode,
+    startConnect,
+    endConnect,
+  };
 
   return (
     <DiagramContext.Provider value={value}>{children}</DiagramContext.Provider>

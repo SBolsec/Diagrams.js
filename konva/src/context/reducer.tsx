@@ -1,9 +1,10 @@
 import * as React from "react";
 
-import { DiagramElement, HistoryActionType } from "./types";
+import { ConnectionLine, DiagramElement, HistoryActionType } from "./types";
 
 export type HistoryState = {
   elements: DiagramElement[][];
+  connections: ConnectionLine[][];
   index: number;
 };
 
@@ -27,7 +28,12 @@ type DragAction = {
   payload: DiagramElement;
 };
 
-type Action = AddAction | UndoAction | RedoAction | DragAction;
+type ConnectAction = {
+  type: HistoryActionType.CONNECT;
+  payload: ConnectionLine;
+};
+
+type Action = AddAction | UndoAction | RedoAction | DragAction | ConnectAction;
 
 export function reducer(state: HistoryState, { type, payload }: Action) {
   switch (type) {
@@ -39,6 +45,8 @@ export function reducer(state: HistoryState, { type, payload }: Action) {
       return handleRedo(state);
     case HistoryActionType.DRAG:
       return handleDrag(state, payload);
+    case HistoryActionType.CONNECT:
+      return handleConnect(state, payload);
     default:
       return state;
   }
@@ -58,6 +66,7 @@ function handleAddElement(state: HistoryState, element: DiagramElement) {
   return {
     ...state,
     elements: [...state.elements, [...state.elements[state.index], element]],
+    connections: [...state.connections, [...state.connections[state.index]]],
     index: state.index + 1,
   };
 }
@@ -89,6 +98,19 @@ function handleDrag(state: HistoryState, element: DiagramElement) {
   return {
     ...state,
     elements: [...state.elements, [...filtered, element]],
+    connections: [...state.connections, [...state.connections[state.index]]],
+    index: state.index + 1,
+  };
+}
+
+function handleConnect(state: HistoryState, connection: ConnectionLine) {
+  return {
+    ...state,
+    elements: [...state.elements, [...state.elements[state.index]]],
+    connections: [
+      ...state.connections,
+      [...state.connections[state.index], connection],
+    ],
     index: state.index + 1,
   };
 }
